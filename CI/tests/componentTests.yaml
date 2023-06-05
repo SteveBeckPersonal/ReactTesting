@@ -1,0 +1,19 @@
+stages:
+  - stage: ComponentTests
+    jobs:
+      - job: RunTests
+        pool: 
+          vmImage: ubuntu-latest
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "14.x"
+            displayName: "Install Node.js"
+          - script: |
+              npm install jest-cli -g
+              npm install
+              jest
+          - task: PublishTestResults@2
+            inputs:
+              testRunner: JUnit
+              testResultsFiles: '**/junit.xml'

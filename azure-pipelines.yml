@@ -1,0 +1,17 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+name: Automated Testing Nightly Run
+
+trigger: none
+
+pool:
+  name: "Azure Pipelines"
+  strategy:
+    parallel:
+      maxParallel: 2
+
+stages:
+  # BUILD
+  - template: CI/tests/componentTests.yaml

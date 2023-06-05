@@ -1,0 +1,34 @@
+# Base image
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+
+# Set working directory
+WORKDIR /app
+
+# Copy csproj and restore dependencies
+COPY *.csproj .
+RUN dotnet restore
+
+# Copy the entire project and build
+COPY . .
+RUN dotnet publish -c Release -o out
+
+# Production image
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+
+# Set working directory
+WORKDIR /app
+
+# Copy published files from the build stage
+COPY --from=build /app/out .
+
+# Copy the entrypoint script
+COPY entrypoint.sh .
+
+# Grant execute permissions to the entrypoint script
+RUN chmod +x entrypoint.sh
+
+# Expose the desired port
+EXPOSE 80
+
+# Start the API using the entrypoint script
+ENTRYPOINT ["/app/entrypoint.sh"]
